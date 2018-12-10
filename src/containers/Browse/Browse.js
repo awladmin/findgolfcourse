@@ -6,36 +6,13 @@ import './Browse.scss';
 //import PropTypes from 'prop-types';
 import BreadCrumbs from '../../components/BreadCrumbs/BreadCrumbs';
 //import decodeHtml, {stripTags} from '../../utils/utils';
+import { Link } from 'react-router-dom';
 
 
 class Browse extends Component {
 
-    
-    
-
-    componentDidMount () {
-        /*const courseId = this.props.match.params.id;
-        if(!courseId){
-            return;
-        }
-        axios.get('https://www.yourgolfhandicap.co.uk/wp-json/wp/v2/courses/'+courseId)
-            .then(response => {
-                this.setState({coursedata:response.data,fetchingImage:true});
-                console.log("response.data: ",response.data);
-            }).then(response => {
-               
-                if(this.state.coursedata._links['wp:featuredmedia']){
-                    let mediaEndPoint = this.state.coursedata._links['wp:featuredmedia'][0].href;
-                    axios.get(mediaEndPoint)
-                    .then(media => {
-                        if(media.data.source_url) {
-                            this.setState({courseImage:media.data.source_url,fetchingImage:false});    
-                        }
-                    });
-                } else {
-                    this.setState({fetchingImage:false});
-                }                
-            });*/
+    state = {
+        counties: ['Buckinghamshire','Cambridgeshire','Cheshire','Cleveland','Cornwall','Cumbria','Derbyshire','Devon','Dorset','Durham','East Sussex','Essex','Gloucestershire','Greater London','Greater Manchester','Hampshire','Hertfordshire','Kent','Lancashire','Leicestershire','Lincolnshire','Merseyside','Norfolk','North Yorkshire','Northamptonshire','Northumberland','Nottinghamshire','Oxfordshire','Shropshire','Somerset','South Yorkshire','Staffordshire','Suffolk','Surrey','Tyne and Wear','Warwickshire','West Berkshire','West Midlands','West Sussex','West Yorkshire','Wiltshire','Worcestershire','Flintshire','Glamorgan','Merionethshire','Monmouthshire','Montgomeryshire','Pembrokeshire','Radnorshire','Anglesey','Breconshire','Caernarvonshire','Cardiganshire','Carmarthenshire','Denbighshire','Aberdeen City','Aberdeenshire','Angus','Argyll and Bute','City of Edinburgh','Clackmannanshire','Dumfries and Galloway','Dundee City','East Ayrshire','East Dunbartonshire','East Lothian','East Renfrewshire','Eilean Siar','Falkirk','Fife','Glasgow City','Highland','Inverclyde','Midlothian','Moray','North Ayrshire','North Lanarkshire','Orkney Islands','Perth and Kinross','Renfrewshire','Scottish Borders','Shetland Islands','South Ayrshire','South Lanarkshire','Stirling','West Dunbartonshire','West Lothian','Antrim','Armagh','Down','Fermanagh','Derry and Londonderry','Tyrone']
     }
 
     render() {
@@ -43,12 +20,22 @@ class Browse extends Component {
         return (
             <Pux>
                 <div className="clearHeader">
-                    <BreadCrumbs title="Browse" />
+                    <BreadCrumbs title="All" />
                     <section className="hero is-light">
                         <div className="hero-body course-details-heading">
                             <h1 className="title">
-                                Browse Pages
+                                Course Directory
                             </h1>                       
+                        </div>
+                    </section>
+                    <section className="section">
+                        <div className="container">
+                            <ul>
+                                {this.state.counties.map(county => {
+                                    let prepareCounty = county.replace(/ /gi,"-").toLowerCase();
+                                    return <li key={prepareCounty}><Link to={'/county/' + prepareCounty}>{county}</Link></li>
+                                })}
+                            </ul>
                         </div>
                     </section>
                 </div>

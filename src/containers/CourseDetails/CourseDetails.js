@@ -73,8 +73,16 @@ class CourseDetails extends Component {
                                         <CourseCard 
                                             imageHtml={imageHtml} 
                                             title={this.state.coursedata.title.rendered}  
+                                            address1={this.state.coursedata['post-meta-fields']['wpcf-address-line-1']}
                                             county={this.state.coursedata['post-meta-fields']['wpcf-county']}
                                             town={this.state.coursedata['post-meta-fields']['wpcf-town']}
+                                            country={this.state.coursedata['post-meta-fields']['wpcf-country']}
+                                            postcode={this.state.coursedata['post-meta-fields']['wpcf-postcode']}
+                                            phone={this.state.coursedata['post-meta-fields']['wpcf-phone']}
+                                            email={this.state.coursedata['post-meta-fields']['wpcf-email']}
+                                            facebook={this.state.coursedata['post-meta-fields']['wpcf-facebook']}
+                                            twitter={this.state.coursedata['post-meta-fields']['wpcf-twitter']}
+                                            website={this.state.coursedata['post-meta-fields']['wpcf-website']}
                                             />                                        
                                     </div>                                    
                                 </div>

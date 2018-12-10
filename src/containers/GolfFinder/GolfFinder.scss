@@ -1,0 +1,39 @@
+.golffinder {
+    margin:0 auto;
+    max-width:400px;
+    &__control {
+        position: relative;
+        &-loader {
+            position: absolute;
+            top:2px;
+            right:6px;
+            display: block;
+            width:32px;
+        }
+    }
+    .search-results {
+        position: absolute;
+        top:36px;
+        left:0;
+        width:100%;
+        border:1px solid #ccc;
+        padding:0;
+        box-shadow: 0 2px 2px #ccc;
+        &__listlink {
+            color:#222;
+            font-size:13px;
+            display: block;
+            padding:3px 12px;
+            &-term {
+                font-weight:bold;
+            }
+            &--active {
+                background:#f4f4f4;
+            }
+            &:hover, 
+            &:active {
+                color:#222;
+            }
+        }
+    }
+}

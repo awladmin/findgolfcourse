@@ -1,0 +1,23 @@
+.homelogo {
+    text-align: center;
+    &__header {
+        font-family: 'Raleway', sans-serif;
+        margin:5px 12px;
+        font-size:28px;
+        &-text {
+            text-transform: uppercase;
+            &--first {
+                color:#eab145;
+            }
+            &--second {
+                color:#fad96d;
+            }
+            &--third {
+                color:#959795;
+            }
+            &--fourth {
+                color:#4a6985;
+            }
+        }
+    }
+}

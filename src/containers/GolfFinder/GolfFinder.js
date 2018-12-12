@@ -20,13 +20,6 @@ class GolfFinder extends Component {
         searchesmade : 0
     }
 
-    /*componentDidMount () {
-        axios.get('https://jsonplaceholder.typicode.com/posts')
-            .then(response => {
-                this.setState({courses:response.data});
-            });
-    }*/
-
     getCourses = (term) => {
         this.setState({fetchingData: true});
         axios.get('https://www.yourgolfhandicap.co.uk/wp-json/wp/v2/courses?per_page=10&search='+term)
@@ -120,7 +113,8 @@ class GolfFinder extends Component {
     loadCourseDetailspage = (i,event) => {
         
         const courseData = this.state.courses[i];
-        console.log("courseData (going to): ",courseData);
+        //console.log("courseData (going to): ",courseData);
+        this.props.history.push('/course/'+courseData.slug+'/'+courseData.id);
 
         if(event){
             event.preventDefault();

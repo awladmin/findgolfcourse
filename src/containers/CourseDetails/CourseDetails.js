@@ -18,6 +18,8 @@ class CourseDetails extends Component {
     
 
     componentDidMount () {
+
+        
         const courseId = this.props.match.params.id;
         if(!courseId){
             return;
@@ -44,6 +46,9 @@ class CourseDetails extends Component {
 
     render() {
 
+        if(this.state.coursedata && this.state.coursedata.title.rendered){
+            document.title = decodeHtml(this.state.coursedata.title.rendered);
+        }
 
         let imageHtml = null; 
         if(this.state.courseImage){

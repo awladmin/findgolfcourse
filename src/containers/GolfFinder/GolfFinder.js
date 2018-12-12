@@ -6,6 +6,7 @@ import PropTypes from 'prop-types';
 import loader from '../../assets/images/loader.png';
 import decodeHtml from '../../utils/utils';
 import { Link } from 'react-router-dom';
+import { connect } from 'react-redux';
 
 
 class GolfFinder extends Component {
@@ -15,7 +16,8 @@ class GolfFinder extends Component {
         showResults: false,
         fetchingData: false,
         fetchTimout: null,
-        hoveredResultIndex: -1
+        hoveredResultIndex: -1,
+        searchesmade : 0
     }
 
     /*componentDidMount () {
@@ -70,6 +72,7 @@ class GolfFinder extends Component {
             this.setState({
                 fetchTimout:setTimeout(() => {
                     this.getCourses(term);
+                    this.props.onSearchMade();
                 },500)
             });
         } else {
@@ -148,6 +151,7 @@ class GolfFinder extends Component {
                     <div className="hero-body">
                         <div className="container">
                             <div className="golffinder">
+                            <h1>Redux Searches made: {this.props.searchesmade}</h1>
                                 <form onSubmit={event => this.formSubmission(event)}>
                                     <div className="field">
                                         <label className="label is-hidden">Find a Golf Course</label>
@@ -171,4 +175,16 @@ GolfFinder.propTypes = {
     searchTypeHandler: PropTypes.func
 }
 
-export default GolfFinder;
+const mapStateToProps = state => {
+    return {
+        searchesmade: state.searchesmade
+    }
+}
+
+const mapDispatchToProps = dispatch =>  {
+    return {
+        onSearchMade: () => dispatch({type: 'INC_SEARCHES'})
+    };
+}
+
+export default connect(mapStateToProps,mapDispatchToProps)(GolfFinder);

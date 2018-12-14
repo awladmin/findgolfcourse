@@ -1,12 +1,13 @@
 import React, { Component } from 'react';
 import axios from 'axios';
-import Pux from '../../hoc/Pux';
+//import Pux from '../../hoc/Pux';
 import './GolfFinder.scss';
 import PropTypes from 'prop-types';
 import loader from '../../assets/images/loader.png';
 import decodeHtml from '../../utils/utils';
 import { Link } from 'react-router-dom';
 import { connect } from 'react-redux';
+import DocumentMeta from 'react-document-meta';
 
 
 class GolfFinder extends Component {
@@ -19,6 +20,7 @@ class GolfFinder extends Component {
         hoveredResultIndex: -1,
         searchesmade : 0
     }
+    
 
     getCourses = (term) => {
         this.setState({fetchingData: true});
@@ -33,7 +35,7 @@ class GolfFinder extends Component {
             .catch(error => {
                 this.setState({
                     courses:[],
-                    showResults:true,
+                    showResults:false,
                     fetchingData: false,
                     hoveredResultIndex: -1
                 });
@@ -125,6 +127,19 @@ class GolfFinder extends Component {
 
     render() {
 
+        //maybe export this
+        const meta = {
+            title: 'UK Golf Course Finder',
+            description: 'Search for over 3000 golf courses in the United Kingdom.',
+            //canonical: 'http://example.com/path/to/page',
+            meta: {
+              charset: 'utf-8',
+              name: {
+                keywords: 'golf, courses, golf club, England, Wales, Scotland, Northern Ireland, Ireland.'
+              }
+            }
+        };
+
         const courses = this.state.courses.map((course,i) => {
             return (
                 <li onMouseEnter={li => this.resultHovered(i)} onMouseLeave={li => this.resultHovered(-1)} className="search-results__listitem" key={course.id}>
@@ -140,12 +155,12 @@ class GolfFinder extends Component {
             <div className="search-results"><ul className="search-results__list">{courses}</ul></div> : null;
 
         return (
-            <Pux>
+            <DocumentMeta {...meta}>
                 <section className='hero is-fullheight'>
                     <div className="hero-body">
                         <div className="container">
                             <div className="golffinder">
-                            <h1>Redux Searches made: {this.props.searchesmade}</h1>
+                                <p>Searches made: {this.props.searchesmade}</p>
                                 <form onSubmit={event => this.formSubmission(event)}>
                                     <div className="field">
                                         <label className="label is-hidden">Find a Golf Course</label>
@@ -160,7 +175,7 @@ class GolfFinder extends Component {
                         </div>
                     </div>
                 </section>
-            </Pux>
+            </DocumentMeta>
         );
     }
 }

@@ -1,0 +1,1 @@
+export const INC_SEARCHES = 'INC_SEARCHES';

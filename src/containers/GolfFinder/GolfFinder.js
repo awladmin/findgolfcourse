@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import axios from 'axios';
+//import axios from 'axios';
 //import Pux from '../../hoc/Pux';
 import './GolfFinder.scss';
 import PropTypes from 'prop-types';
@@ -8,6 +8,7 @@ import decodeHtml from '../../utils/utils';
 import { Link } from 'react-router-dom';
 import { connect } from 'react-redux';
 import DocumentMeta from 'react-document-meta';
+import firebase from '../../Firebase.js';
 
 
 class GolfFinder extends Component {
@@ -24,14 +25,33 @@ class GolfFinder extends Component {
 
     getCourses = (term) => {
         this.setState({fetchingData: true});
-        axios.get('https://www.yourgolfhandicap.co.uk/wp-json/wp/v2/courses?per_page=10&search='+term)
-            .then(response => {
-                this.setState({
-                    courses:response.data,
-                    fetchingData: false,
-                    showResults:true
-                });
-            })
+
+        const db = firebase.database();
+        console.log("db: ",db);
+        var ref = db.ref("courses");
+
+        //query term
+        ref.orderByChild("post_title").limitToFirst(10).once("value")
+            .then(((snapshot) => {
+                //console.log("snapshot: ",snapshot.val());
+                //convert data to array
+                let coursesArray = Object.values(snapshot.val());
+                if(snapshot.val()){
+                    this.setState({
+                        courses:coursesArray,
+                        fetchingData: false,
+                        showResults:true
+                    });
+                } else {
+                    this.setState({
+                        courses:[],
+                        showResults:false,
+                        fetchingData: false,
+                        hoveredResultIndex: -1
+                    });
+                }
+                
+            }))
             .catch(error => {
                 this.setState({
                     courses:[],
@@ -141,13 +161,20 @@ class GolfFinder extends Component {
         };
 
         const courses = this.state.courses.map((course,i) => {
+            
+            let usable = true;
+            if(!course.post_name) {
+                usable = false;
+            }
+            
             return (
-                <li onMouseEnter={li => this.resultHovered(i)} onMouseLeave={li => this.resultHovered(-1)} className="search-results__listitem" key={course.id}>
+                (!usable) ? null : 
+                <li onMouseEnter={li => this.resultHovered(i)} onMouseLeave={li => this.resultHovered(-1)} className="search-results__listitem" key={course.ID}>
                     <Link 
                         className={(i === this.state.hoveredResultIndex) ? 'search-results__listlink search-results__listlink--active' : 'search-results__listlink'}
                         to={{
-                            pathname : 'course/'+course.slug+'/'+course.id
-                    }}>{decodeHtml(course.title.rendered)}</Link>
+                            pathname : 'course/'+course.post_name+'/'+course.ID
+                    }}>{decodeHtml(course.post_title)}</Link>
                 </li>
             )
         });
@@ -160,7 +187,7 @@ class GolfFinder extends Component {
                     <div className="hero-body">
                         <div className="container">
                             <div className="golffinder">
-                                <p>Searches made: {this.props.searchesmade}</p>
+                                <p>Searches made (Redux persisted): {this.props.searchesmade}</p>
                                 <form onSubmit={event => this.formSubmission(event)}>
                                     <div className="field">
                                         <label className="label is-hidden">Find a Golf Course</label>

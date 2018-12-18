@@ -25,7 +25,7 @@ const coursecard = (props) => {
                         <p className="title is-4">{decodeHtml(props.title)}</p>
                         <p className="subtitle is-6">{address}</p>
                         {props.phone ? <p className="subtitle is-6">Phone: {props.phone}</p> : null}
-                        <p className="subtitle is-6"><a href={(props.website.indexOf(/http/) !== -1) ? props.website : 'http://' + props.website}>Visit Website</a></p>
+                        {props.website ? <p className="subtitle is-6"><a href={(props.website.indexOf(/http/) !== -1) ? props.website : 'http://' + props.website}>Visit Website</a></p> : null}
                     </div>                                                        
                 </div>
             </div>

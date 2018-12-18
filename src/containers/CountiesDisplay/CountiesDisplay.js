@@ -6,42 +6,49 @@ import './CountiesDisplay.scss';
 //import PropTypes from 'prop-types';
 import BreadCrumbs from '../../components/BreadCrumbs/BreadCrumbs';
 //import decodeHtml, {stripTags} from '../../utils/utils';
-//import { Link } from 'react-router-dom';
+import { Link } from 'react-router-dom';
+import firebase from '../../Firebase.js';
 
 
 class CountiesDisplay extends Component {
 
     state = {
-        countyraw : null,
-        countyDisplayName : null,
-        countyCourses: null
+        countyCourses: null,
+        countyDisplayName:null
     }
     
 
     componentDidMount () {
         const county = this.props.match.params.county;
-        console.log("county: ",county)
         if(!county){
             return;
         }
-        /*axios.get('https://www.yourgolfhandicap.co.uk/wp-json/wp/v2/courses/'+courseId)
-            .then(response => {
-                this.setState({coursedata:response.data,fetchingImage:true});
-                console.log("response.data: ",response.data);
-            }).then(response => {
-               
-                if(this.state.coursedata._links['wp:featuredmedia']){
-                    let mediaEndPoint = this.state.coursedata._links['wp:featuredmedia'][0].href;
-                    axios.get(mediaEndPoint)
-                    .then(media => {
-                        if(media.data.source_url) {
-                            this.setState({courseImage:media.data.source_url,fetchingImage:false});    
-                        }
-                    });
+        
+
+        const db = firebase.database();
+        const ref = db.ref("courses");
+        let revertCounty = county.replace(/-/g, " ");
+        revertCounty = revertCounty.toLowerCase()
+            .split(' ')
+            .map((s) => s.charAt(0).toUpperCase() + s.substring(1))
+            .join(' ');
+        
+            this.setState({countyDisplayName:revertCounty})
+
+
+        //query term
+        ref.orderByChild("wpcf-county")
+            .equalTo(revertCounty)
+            .on("value", (snapshot) => {
+                
+                if(snapshot.val()){
+                    let coursesInfo = Object.values(snapshot.val());
+                    //console.log(coursesInfo);
+                    this.setState({countyCourses:coursesInfo});
                 } else {
-                    this.setState({fetchingImage:false});
-                }                
-            });*/
+                    this.setState({countyCourses:null});
+                }
+            });
     }
 
     render() {
@@ -61,9 +68,9 @@ class CountiesDisplay extends Component {
                         <div className="container">
                             <ul>
                                 {
-                                    //this.state.countyCourses.map(course => {
-                                        //return <li><Link to={'/county/' + prepareCounty}>{course.title}</Link></li>
-                                    //})
+                                    this.state.countyCourses.map(course => {
+                                        return <li key={course.ID}><Link to={'/course/' + course.post_name + '/' + course.ID}>{course.post_title}</Link></li>
+                                    })
                                 }
                             </ul>
                         </div>

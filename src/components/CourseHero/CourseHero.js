@@ -16,7 +16,7 @@ const coursecard = (props) => {
         <div className="card">
             <div className="card-image">
                 <figure className="image is-4by3">
-                    {props.imageHtml}
+                    {props.image ? <img className="course-details__featured-image" src={props.image} alt={props.post_title} /> : null}
                 </figure>
             </div>
             <div className="card-content">

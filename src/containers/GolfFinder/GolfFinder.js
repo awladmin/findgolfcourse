@@ -27,11 +27,11 @@ class GolfFinder extends Component {
         this.setState({fetchingData: true});
 
         const db = firebase.database();
-        console.log("db: ",db);
-        var ref = db.ref("courses");
+        const ref = db.ref("courses");
 
         //query term
-        ref.orderByChild("post_title").limitToFirst(10).once("value")
+        ref.orderByChild("post_title")
+            .limitToFirst(10).once("value")
             .then(((snapshot) => {
                 console.log("snapshot: ",snapshot.val());
                 //convert data to array

@@ -33,7 +33,7 @@ class GolfFinder extends Component {
         //query term
         ref.orderByChild("post_title").limitToFirst(10).once("value")
             .then(((snapshot) => {
-                //console.log("snapshot: ",snapshot.val());
+                console.log("snapshot: ",snapshot.val());
                 //convert data to array
                 let coursesArray = Object.values(snapshot.val());
                 if(snapshot.val()){

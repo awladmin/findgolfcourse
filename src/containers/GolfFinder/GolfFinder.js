@@ -70,8 +70,8 @@ class GolfFinder extends Component {
        
 
 
+        
         /*
-
         const clouddb = firebase.firestore();
         // Disable deprecated features
         clouddb.settings({
@@ -93,7 +93,7 @@ class GolfFinder extends Component {
         const rtref = rtdb.ref("courses");
         
         rtref.orderByKey()
-            .limitToFirst(10)
+            //.limitToFirst(10)
             .startAt("0")
             .once("value")
             .then(((snapshot) => {
@@ -130,8 +130,8 @@ class GolfFinder extends Component {
                         facebook: (meta.facebook) ? meta.facebook : ''
                     }
                     
-                    //console.log("newData: ",newData);
-                    //console.log("count: ",count);
+                    console.log("newData: ",newData);
+                    console.log("oldcount: ",oldcount);
                     clouddb.collection("courses").doc(meta.ID).set(newData);
                     
                     
@@ -146,8 +146,8 @@ class GolfFinder extends Component {
                 console.log("error happened: ",error);
             }); 
             
-           
-        */
+           */
+        
         
             
     }

@@ -26,19 +26,24 @@ class GolfFinder extends Component {
     getCourses = (term) => {
         this.setState({fetchingData: true});
 
-        const db = firebase.database();
-        const ref = db.ref("courses");
-
-        //query term
-        ref.orderByChild("post_title")
-            .limitToFirst(10).once("value")
-            .then(((snapshot) => {
-                console.log("snapshot: ",snapshot.val());
-                //convert data to array
-                let coursesArray = Object.values(snapshot.val());
-                if(snapshot.val()){
+        
+        
+        const db = firebase.firestore();
+        db.settings({
+            timestampsInSnapshots: true
+        });
+        const ref = db.collection("courses");
+        let results = [];
+        ref.where("searchTitle", ">=", term)
+            .limit(10)
+            .get()
+            .then((querySnapshot) => {
+                querySnapshot.forEach((course) => {
+                    results.push(course.data());
+                });
+                if(results.length){
                     this.setState({
-                        courses:coursesArray,
+                        courses:results,
                         fetchingData: false,
                         showResults:true
                     });
@@ -50,9 +55,8 @@ class GolfFinder extends Component {
                         hoveredResultIndex: -1
                     });
                 }
-                
-            }))
-            .catch(error => {
+            })
+            .catch((error) => {
                 this.setState({
                     courses:[],
                     showResults:false,
@@ -60,6 +64,92 @@ class GolfFinder extends Component {
                     hoveredResultIndex: -1
                 });
             });
+        
+        
+
+       
+
+
+        /*
+
+        const clouddb = firebase.firestore();
+        // Disable deprecated features
+        clouddb.settings({
+            timestampsInSnapshots: true
+        });
+        const ref = clouddb.collection("courses");
+
+            //Legacy data transform
+            let count = 0;
+            ref.get()
+                .then((querySnapshot) => {
+                    console.log("querySnapshot: ",querySnapshot);
+                    querySnapshot.forEach((course) => count++);
+                    console.log("count in cloud db: ",count);
+                });
+        
+        let oldcount = 0;
+        const rtdb = firebase.database();
+        const rtref = rtdb.ref("courses");
+        
+        rtref.orderByKey()
+            .limitToFirst(10)
+            .startAt("0")
+            .once("value")
+            .then(((snapshot) => {
+                console.log("snapshot: ",snapshot.val());
+                
+                const courseData = snapshot.val();
+            
+
+                courseData.forEach((meta) => {
+                    
+                    oldcount++;
+                    
+                    let newData = {
+                        id: meta.ID,
+                        title : meta.post_title,
+                        searchTitle: meta.post_title.toLowerCase(),
+                        desc : meta.post_content,
+                        addressLine1: (meta['wpcf-address-line-1']) ? meta['wpcf-address-line-1'].toLowerCase() : '',
+                        town: (meta['wpcf-town']) ? meta['wpcf-town'].toLowerCase() : '',
+                        county: (meta['wpcf-county']) ? meta['wpcf-county'].toLowerCase() : '',
+                        postcode: (meta['wpcf-postcode']) ? meta['wpcf-postcode'].toLowerCase() : '',
+                        country: (meta['wpcf-country']) ? meta['wpcf-country'].toLowerCase() : '',
+                        email: (meta['wpcf-email']) ? meta['wpcf-email'].toLowerCase() : '',
+                        phone: (meta['wpcf-phone']) ? meta['wpcf-phone'].toLowerCase() : '',
+                        rounds: (meta['wpcf-rounds-at-course']) ? meta['wpcf-rounds-at-course'] : '',
+                        website: (meta['wpcf-website']) ? meta['wpcf-website'] : '',
+                        lat: (meta['wpcf-latitude']) ? meta['wpcf-latitude'] : '',
+                        long: (meta['wpcf-longitude']) ? meta['wpcf-longitude'] : '',
+                        scorecards: (meta['wpcf-course-scorecards']) ? meta['wpcf-course-scorecards'] : '',
+                        tees: (meta['sc-course-tees']) ? meta['sc-course-tees'] : '',
+                        image: (meta.image) ? meta.image : '',
+                        slug: meta.post_name,
+                        twitter: (meta.twitter) ? meta.twitter : '',
+                        facebook: (meta.facebook) ? meta.facebook : ''
+                    }
+                    
+                    //console.log("newData: ",newData);
+                    //console.log("count: ",count);
+                    clouddb.collection("courses").doc(meta.ID).set(newData);
+                    
+                    
+                });
+                
+
+                console.log("realtime count: ",oldcount);
+
+            }))
+            .catch(error => {
+                //
+                console.log("error happened: ",error);
+            }); 
+            
+           
+        */
+        
+            
     }
 
     searchTypeHandler = (event) => {
@@ -163,18 +253,18 @@ class GolfFinder extends Component {
         const courses = this.state.courses.map((course,i) => {
             
             let usable = true;
-            if(!course.post_name) {
+            if(!course.title) {
                 usable = false;
             }
             
             return (
                 (!usable) ? null : 
-                <li onMouseEnter={li => this.resultHovered(i)} onMouseLeave={li => this.resultHovered(-1)} className="search-results__listitem" key={course.ID}>
+                <li onMouseEnter={li => this.resultHovered(i)} onMouseLeave={li => this.resultHovered(-1)} className="search-results__listitem" key={course.id}>
                     <Link 
                         className={(i === this.state.hoveredResultIndex) ? 'search-results__listlink search-results__listlink--active' : 'search-results__listlink'}
                         to={{
-                            pathname : 'course/'+course.post_name+'/'+course.ID
-                    }}>{decodeHtml(course.post_title)}</Link>
+                            pathname : 'course/'+course.slug+'/'+course.id
+                    }}>{decodeHtml(course.title)}</Link>
                 </li>
             )
         });

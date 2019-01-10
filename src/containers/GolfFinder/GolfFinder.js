@@ -11,7 +11,7 @@ import DocumentMeta from 'react-document-meta';
 import firebase from '../../Firebase.js';
 
 
-class GolfFinder extends Component {
+export class GolfFinder extends Component {
 
     state = {
         courses: [],

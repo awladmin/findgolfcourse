@@ -3,6 +3,7 @@ import React, { Component } from 'react';
 //import Pux from '../../hoc/Pux';
 import './GolfFinder.scss';
 import PropTypes from 'prop-types';
+import * as actionTypes from  '../../store/actions/actionTypes';
 import loader from '../../assets/images/loader.png';
 import decodeHtml from '../../utils/utils';
 import { Link } from 'react-router-dom';
@@ -20,8 +21,7 @@ export class GolfFinder extends Component {
         fetchTimout: null,
         hoveredResultIndex: -1,
         searchesmade : 0
-    }
-    
+    }    
 
     getCourses = (term) => {
         this.setState({fetchingData: true});
@@ -303,14 +303,14 @@ GolfFinder.propTypes = {
 
 const mapStateToProps = state => {
     return {
-        searchesmade: state.searchesmade
+        searchesmade: state.ctr.searchesmade
     }
 }
 
-const mapDispatchToProps = dispatch =>  {
+const mapDispatchToProps = dispatch => {
     return {
-        onSearchMade: () => dispatch({type: 'INC_SEARCHES'})
-    };
+        onSearchMade: () => dispatch({type: actionTypes.INC_SEARCHES})
+    }
 }
 
 export default connect(mapStateToProps,mapDispatchToProps)(GolfFinder);

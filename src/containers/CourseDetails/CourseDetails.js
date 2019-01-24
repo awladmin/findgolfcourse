@@ -1,5 +1,7 @@
 import React, { Component } from 'react';
 //import axios from 'axios';
+import { connect } from 'react-redux';
+import * as actionTypes from  '../../store/actions/actionTypes';
 import Pux from '../../hoc/Pux';
 import './CourseDetails.scss';
 import CourseCard from '../../components/CourseHero/CourseHero';
@@ -9,16 +11,17 @@ import decodeHtml, {stripTags} from '../../utils/utils';
 import firebase from '../../Firebase.js';
 
 
-class CourseDetails extends Component {
+export class CourseDetails extends Component {
 
     state = {
         coursedata : null,
         courseId : null,
+        searchcoursehistory: []
     }
-    
 
     componentDidMount () {
 
+        
         
         const courseId = this.props.match.params.id;
         if(!courseId){
@@ -42,6 +45,9 @@ class CourseDetails extends Component {
                 } else {
                     this.setState({coursedata:null});
                 }
+
+                this.props.onDataLoad(this.state.coursedata.ID,this.state.coursedata.post_title); 
+                
             });
 
         
@@ -52,6 +58,14 @@ class CourseDetails extends Component {
         if(this.state.coursedata && this.state.coursedata.post_title){
             document.title = decodeHtml(this.state.coursedata.post_title);
         }
+        const history = this.props.searchcoursehistory.map((course,i) => {          
+            return (
+                <p key={course.id}>
+                {decodeHtml(course.title)}
+                </p>
+            );                           
+        });
+        
 
         return (
             <Pux>
@@ -86,8 +100,9 @@ class CourseDetails extends Component {
                                             website={this.state.coursedata['wpcf-website']}
                                             />                                        
                                     </div>                                    
-                                </div>
-                            </section>
+                                </div>                               
+                            </section>   
+                            {history}
                         </Pux>}
                 </div>
                     
@@ -97,7 +112,19 @@ class CourseDetails extends Component {
 }
 
 CourseDetails.propTypes = {
-   coursedata: PropTypes.array
+    searchTypeHandler: PropTypes.func
 }
 
-export default CourseDetails;
+const mapStateToProps = state => {
+    return {
+        searchcoursehistory: state.shr.searchcoursehistory
+    }
+}
+
+const mapDispatchToProps = dispatch => {
+    return {
+        onDataLoad: (courseId,courseTitle) => dispatch({type: actionTypes.HISTORY_ADD, id:courseId, title:courseTitle})
+    };
+}
+
+export default connect(mapStateToProps,mapDispatchToProps)(CourseDetails);

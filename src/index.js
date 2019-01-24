@@ -1,13 +1,20 @@
 import React from 'react';
 import ReactDOM from 'react-dom';
-import { createStore } from 'redux';
+import { createStore, combineReducers } from 'redux';
 import './index.scss';
 import App from './App';
 import * as serviceWorker from './serviceWorker';
-import reducer from './store/reducer';
+import counterReducer from './store/reducers/counter';
+import searchHistoryReducer from './store/reducers/searchhistory';
 import { Provider } from 'react-redux'
 
-const store = createStore(reducer);
+const rootReducer = combineReducers({
+    ctr:counterReducer,
+    shr:searchHistoryReducer
+});
+
+const store = createStore(rootReducer);
+console.log(store.getState());
 
 ReactDOM.render(<Provider store={store}><App /></Provider>, document.getElementById('root'));
 
